@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ストーリーズ分析、どこまでできる？｜ig-insights</title>
+<meta name="description" content="「閲覧率・クリック数」「前後のつながり」「1日分まとめて見る」— ご要望いただいた内容の実現可能性をわかりやすくまとめました。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --base: #91aedf;
+    --base-light: #d5e3f5;
+    --base-soft: #eef3fb;
+    --accent-pink: #f8c8dc;
+    --ok: #6bbf9b;
+    --ok-bg: #e7f4ee;
+    --warn: #e8b96e;
+    --warn-bg: #fbf2e3;
+    --ng: #d47a7a;
+    --ng-bg: #f7e5e5;
+    --white: #ffffff;
+    --text: #4a5568;
+    --text-soft: #7b8593;
+    --text-strong: #2d3748;
+    --shadow: 0 4px 20px rgba(145, 174, 223, 0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
+    color: var(--text);
+    background: linear-gradient(180deg, #f5f9ff 0%, #eef3fb 100%);
+    min-height: 100vh;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 48px 20px 120px; }
+
+  /* header */
+  header { text-align: center; margin-bottom: 48px; position: relative; }
+  header::before { content: "☁️"; position: absolute; top: -18px; left: 8%; font-size: 30px; opacity: 0.6; }
+  header::after { content: "💡"; position: absolute; top: -6px; right: 12%; font-size: 26px; opacity: 0.8; }
+  .badge {
+    display: inline-block; background: var(--base-light); color: var(--base);
+    padding: 6px 18px; border-radius: 100px; font-size: 13px; font-weight: 700;
+    margin-bottom: 16px; letter-spacing: 0.05em;
+  }
+  h1 {
+    font-size: clamp(22px, 5vw, 30px); font-weight: 700; color: var(--text-strong);
+    margin-bottom: 12px; letter-spacing: 0.02em; line-height: 1.4;
+  }
+  .subtitle { color: var(--text-soft); font-size: 14px; }
+
+  /* quote */
+  .quote-box {
+    background: var(--white); border-left: 4px solid var(--base);
+    padding: 20px 24px; border-radius: 14px; margin-bottom: 24px;
+    box-shadow: var(--shadow); position: relative;
+  }
+  .quote-label {
+    font-size: 12px; font-weight: 700; color: var(--base);
+    margin-bottom: 8px; letter-spacing: 0.05em;
+  }
+  .quote-text { font-size: 14px; color: var(--text); line-height: 1.8; }
+  .quote-text strong { color: var(--text-strong); background: linear-gradient(transparent 60%, var(--accent-pink) 60%); padding: 0 2px; }
+
+  /* verdict */
+  .verdict {
+    background: linear-gradient(135deg, var(--base) 0%, #a8c2e8 100%);
+    color: white; border-radius: 20px; padding: 28px 24px;
+    text-align: center; margin-bottom: 40px; box-shadow: var(--shadow);
+    position: relative; overflow: hidden;
+  }
+  .verdict::before { content: "✨"; position: absolute; top: 12px; left: 16px; font-size: 20px; opacity: 0.8; }
+  .verdict::after { content: "🌸"; position: absolute; bottom: 12px; right: 16px; font-size: 20px; opacity: 0.8; }
+  .verdict-label { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; opacity: 0.95; margin-bottom: 8px; }
+  .verdict-big { font-size: 32px; font-weight: 700; margin-bottom: 6px; }
+  .verdict-sub { font-size: 13px; opacity: 0.9; }
+
+  /* section title */
+  .section-title {
+    font-size: 19px; font-weight: 700; margin: 40px 0 16px;
+    display: flex; align-items: center; gap: 10px; color: var(--text-strong);
+  }
+  .section-title::before {
+    content: ""; width: 4px; height: 20px; background: var(--base);
+    border-radius: 4px;
+  }
+
+  /* bucket card */
+  .bucket {
+    border-radius: 20px; padding: 24px; margin-bottom: 20px;
+    box-shadow: var(--shadow); background: var(--white);
+    border: 2px solid transparent;
+  }
+  .bucket.ok { border-color: var(--ok); background: var(--ok-bg); }
+  .bucket.warn { border-color: var(--warn); background: var(--warn-bg); }
+  .bucket.ng { border-color: var(--ng); background: var(--ng-bg); }
+  .bucket-head {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .bucket-emoji { font-size: 28px; }
+  .bucket-title { font-size: 17px; font-weight: 700; color: var(--text-strong); }
+  .bucket-desc { font-size: 13px; color: var(--text-soft); margin-top: 2px; }
+  .bucket-list { list-style: none; padding: 0; }
+  .bucket-list li {
+    background: var(--white); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 8px;
+    font-size: 14px; line-height: 1.6;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .bucket-list li strong { color: var(--text-strong); font-weight: 700; }
+  .bucket-list li .mark { flex-shrink: 0; font-weight: 700; }
+  .ok .mark { color: var(--ok); }
+  .warn .mark { color: var(--warn); }
+  .ng .mark { color: var(--ng); }
+  .note { font-size: 12px; color: var(--text-soft); margin-top: 4px; display: block; }
+
+  /* matrix */
+  .matrix-wrap {
+    background: var(--white); border-radius: 16px; padding: 8px;
+    box-shadow: var(--shadow); overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--base-soft); }
+  th { background: var(--base-soft); color: var(--text-strong); font-weight: 700; font-size: 12px; letter-spacing: 0.03em; }
+  th:first-child, td:first-child { padding-left: 16px; }
+  th:last-child, td:last-child { padding-right: 16px; }
+  td.status { text-align: center; font-weight: 700; white-space: nowrap; }
+  td.status.ok { color: var(--ok); }
+  td.status.warn { color: var(--warn); }
+  td.status.ng { color: var(--ng); }
+  tr:last-child td { border-bottom: none; }
+  .metric-name { font-weight: 700; color: var(--text-strong); font-size: 13px; }
+  .metric-def { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+  /* wall */
+  .wall {
+    background: var(--white); border-radius: 16px; padding: 20px 22px;
+    margin-bottom: 14px; box-shadow: var(--shadow);
+    border-left: 4px solid var(--ng);
+  }
+  .wall-num {
+    display: inline-block; background: var(--ng); color: white;
+    padding: 2px 10px; border-radius: 100px; font-size: 11px;
+    font-weight: 700; margin-right: 8px; vertical-align: middle;
+  }
+  .wall-title { font-size: 15px; font-weight: 700; color: var(--text-strong); display: inline; }
+  .wall-body { font-size: 13px; color: var(--text); margin-top: 8px; line-height: 1.7; }
+  .wall-body .reason { color: var(--ng); font-weight: 700; }
+  .wall-body .alt { background: var(--base-soft); padding: 10px 12px; border-radius: 10px; margin-top: 8px; display: block; font-size: 12px; }
+  .wall-body .alt::before { content: "🌿 代替案: "; font-weight: 700; color: var(--base); }
+
+  /* confirm */
+  .confirm-box {
+    background: linear-gradient(135deg, #fef5fa 0%, #eef3fb 100%);
+    border-radius: 20px; padding: 28px 24px; box-shadow: var(--shadow);
+    border: 2px solid var(--base-soft); margin-top: 24px;
+  }
+  .confirm-title {
+    font-size: 17px; font-weight: 700; color: var(--text-strong);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .confirm-title::before { content: "💭"; font-size: 22px; }
+  .confirm-item {
+    background: var(--white); border-radius: 14px; padding: 16px 18px;
+    margin-bottom: 10px;
+  }
+  .confirm-q {
+    font-size: 14px; font-weight: 700; color: var(--text-strong);
+    margin-bottom: 6px;
+  }
+  .confirm-q::before {
+    content: "Q."; color: var(--base); font-weight: 700; margin-right: 6px;
+  }
+  .confirm-opts { font-size: 12px; color: var(--text-soft); line-height: 1.8; padding-left: 20px; }
+  .confirm-opts li { list-style: none; position: relative; }
+  .confirm-opts li::before {
+    content: "◯"; color: var(--accent-pink); position: absolute; left: -16px;
+    font-weight: 700;
+  }
+
+  .footer { text-align: center; margin-top: 48px; font-size: 12px; color: var(--text-soft); }
+  .footer a { color: var(--base); text-decoration: none; margin: 0 8px; }
+
+  /* TOC jump */
+  .toc {
+    background: var(--white); border-radius: 14px; padding: 14px 18px;
+    box-shadow: var(--shadow); margin-bottom: 32px; font-size: 13px;
+  }
+  .toc-label { font-weight: 700; color: var(--base); margin-right: 8px; }
+  .toc a { color: var(--text); text-decoration: none; margin-right: 12px; }
+  .toc a:hover { color: var(--base); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <span class="badge">feasibility report</span>
+    <h1>ストーリーズ分析、<br>どこまでできる？</h1>
+    <p class="subtitle">ご要望いただいた内容の、実現可能性まとめ</p>
+  </header>
+
+  <!-- 依頼者の言葉 -->
+  <div class="quote-box">
+    <div class="quote-label">💌 いただいたご要望</div>
+    <p class="quote-text">
+      ストーリーズだったら、<strong>閲覧率やクリック数の高いもの</strong>がパッとみれると便利です！！<br>
+      ただ、その1枚だけでなく<strong>前後のつながり</strong>が大事なので、<br>
+      例えば閲覧率高いものの<strong>その日1日のストーリーズがまとめて見れる</strong>と楽です💡
+    </p>
+  </div>
+
+  <!-- 目次 -->
+  <div class="toc">
+    <span class="toc-label">目次</span>
+    <a href="#verdict">結論</a>
+    <a href="#can">できること</a>
+    <a href="#maybe">条件付き</a>
+    <a href="#cannot">できないこと</a>
+    <a href="#matrix">一覧表</a>
+    <a href="#walls">なぜできないか</a>
+    <a href="#confirm">確認したいこと</a>
+  </div>
+
+  <!-- 結論 -->
+  <div class="verdict" id="verdict">
+    <div class="verdict-label">VERDICT</div>
+    <div class="verdict-big">約 80〜90% 実現可能</div>
+    <p class="verdict-sub">残り10〜20%はInstagram側の仕様で取得不可 → 代替指標で運用します</p>
+  </div>
+
+  <!-- できること -->
+  <h2 class="section-title" id="can">しっかりできること</h2>
+  <div class="bucket ok">
+    <div class="bucket-head">
+      <span class="bucket-emoji">✨</span>
+      <div>
+        <div class="bucket-title">これは確実にお届けできます</div>
+        <div class="bucket-desc">追加実装やヒアリング不要で、既に準備が整っているもの</div>
+      </div>
+    </div>
+    <ul class="bucket-list">
+      <li><span class="mark">◯</span><div><strong>閲覧率</strong>（フォロワーの何%に届いたか）<span class="note">リーチ ÷ フォロワー数 × 100。直近30日のフォロワー履歴は取得済</span></div></li>
+      <li><span class="mark">◯</span><div><strong>反応合計</strong>（返信＋シェア＋プロフィール遷移）<span class="note">ストーリーへの"反応の総量"として使える近似指標</span></div></li>
+      <li><span class="mark">◯</span><div><strong>プロフィール遷移率</strong>（プロフィールへ飛んだ率）<span class="note">「このストーリーからフォロー動線につながったか」の代わりになる</span></div></li>
+      <li><span class="mark">◯</span><div><strong>リピート率</strong>（1人あたり平均視聴回数）<span class="note">2回以上見られたストーリーは"刺さった"サイン</span></div></li>
+      <li><span class="mark">◯</span><div><strong>日次グルーピング</strong>（その日の連投をひとまとめ）<span class="note">📅日報タブとして新設予定</span></div></li>
+      <li><span class="mark">◯</span><div><strong>サムネ横並び表示</strong>（その日の流れを視覚的に追える）<span class="note">VPSに画像保存済み。いつでも表示可能</span></div></li>
+      <li><span class="mark">◯</span><div><strong>ランキング表示</strong>（閲覧率・反応数で降順ソート）<span class="note">"パッと見たい"を満たす中核機能</span></div></li>
+      <li><span class="mark">◯</span><div><strong>前後のつながり可視化</strong>（時系列のタイムライン）<span class="note">「フック → 本編 → CTA」の流れが追える</span></div></li>
+    </ul>
+  </div>
+
+  <!-- 条件付き -->
+  <h2 class="section-title" id="maybe">条件付きでできること</h2>
+  <div class="bucket warn">
+    <div class="bucket-head">
+      <span class="bucket-emoji">🌱</span>
+      <div>
+        <div class="bucket-title">少し工夫すればできるもの</div>
+        <div class="bucket-desc">追加実装や、運用上の工夫が必要</div>
+      </div>
+    </div>
+    <ul class="bucket-list">
+      <li><span class="mark">△</span><div><strong>31日より前のフォロワー推移</strong><span class="note">Graph APIに履歴が無い → 現在値で近似 or 過去のスクショ等から手入力</span></div></li>
+      <li><span class="mark">△</span><div><strong>正確な離脱率</strong>（どこで見るのをやめたか）<span class="note">navigation の内訳取得APIを追加実装すれば可（30〜60分の作業）</span></div></li>
+      <li><span class="mark">△</span><div><strong>次のストーリーへ送られた率</strong><span class="note">同上。breakdown API対応で算出可能</span></div></li>
+      <li><span class="mark">△</span><div><strong>24時間経過ギリギリのストーリーの取りこぼし</strong><span class="note">現在6時間ごとに取得中。cron間隔を詰めればさらに低減可</span></div></li>
+    </ul>
+  </div>
+
+  <!-- できないこと -->
+  <h2 class="section-title" id="cannot">どうしてもできないこと</h2>
+  <div class="bucket ng">
+    <div class="bucket-head">
+      <span class="bucket-emoji">🚧</span>
+      <div>
+        <div class="bucket-title">Instagram側の仕様で取得不可</div>
+        <div class="bucket-desc">代替指標での運用をご提案します</div>
+      </div>
+    </div>
+    <ul class="bucket-list">
+      <li><span class="mark">✕</span><div><strong>リンクスティッカーの直接タップ数</strong><span class="note">Graph APIで非公開。「いちばん見たい数字」が取れないのでご注意</span></div></li>
+      <li><span class="mark">✕</span><div><strong>完視聴率</strong>（最後まで見た人の割合）<span class="note">公式UIの「閲覧維持」に相当する指標は取得不能</span></div></li>
+      <li><span class="mark">✕</span><div><strong>ストーリー別の滞在時間・平均視聴秒数</strong><span class="note">リールは取れる、ストーリーは取れない</span></div></li>
+      <li><span class="mark">✕</span><div><strong>視聴者の属性別データ</strong>（性別・年代・地域）<span class="note">個別ストーリー単位では不可</span></div></li>
+      <li><span class="mark">✕</span><div><strong>タップされた位置</strong>（画面のどこを押したか）<span class="note">そもそもAPI提供なし</span></div></li>
+      <li><span class="mark">✕</span><div><strong>運用開始より前のストーリー</strong><span class="note">24時間で消えるため過去遡及は不可能</span></div></li>
+      <li><span class="mark">✕</span><div><strong>削除されたストーリーの事後取得</strong><span class="note">一度消えたものは復元不能</span></div></li>
+    </ul>
+  </div>
+
+  <!-- マトリクス -->
+  <h2 class="section-title" id="matrix">要望 × できる/できない 一覧</h2>
+  <div class="matrix-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ご要望</th>
+          <th>定義</th>
+          <th style="text-align:center;">可否</th>
+          <th>備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="metric-name">閲覧率</div></td>
+          <td><div class="metric-def">リーチ÷フォロワー数</div></td>
+          <td class="status ok">◯</td>
+          <td>30日以内は精緻、それ以前は近似</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">閲覧率</div></td>
+          <td><div class="metric-def">完視聴率</div></td>
+          <td class="status ng">✕</td>
+          <td>代替: リピート率</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">クリック数</div></td>
+          <td><div class="metric-def">リンクタップ数</div></td>
+          <td class="status ng">✕</td>
+          <td>API非公開</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">クリック数</div></td>
+          <td><div class="metric-def">プロフィール遷移</div></td>
+          <td class="status ok">◯</td>
+          <td>すぐ実装可</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">クリック数</div></td>
+          <td><div class="metric-def">次への送り</div></td>
+          <td class="status warn">△</td>
+          <td>breakdown対応で可</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">クリック数</div></td>
+          <td><div class="metric-def">反応合計（返信＋シェア＋PV）</div></td>
+          <td class="status ok">◯</td>
+          <td>依頼者と合意が必要</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">ランキング表示</div></td>
+          <td><div class="metric-def">指標降順で"パッと見る"</div></td>
+          <td class="status ok">◯</td>
+          <td>即実装可</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">日次グルーピング</div></td>
+          <td><div class="metric-def">その日の連投セット</div></td>
+          <td class="status ok">◯</td>
+          <td>📅日報タブで実装</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">前後のつながり</div></td>
+          <td><div class="metric-def">時系列の流れ</div></td>
+          <td class="status ok">◯</td>
+          <td>サムネ横並びで直感的に</td>
+        </tr>
+        <tr>
+          <td><div class="metric-name">1日分まとめて</div></td>
+          <td><div class="metric-def">📅日報・カード表示</div></td>
+          <td class="status ok">◯</td>
+          <td>GAS or Webビューワーで</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 壁 -->
+  <h2 class="section-title" id="walls">なぜできない？ 4つの壁</h2>
+
+  <div class="wall">
+    <span class="wall-num">壁 1</span>
+    <h3 class="wall-title">リンクスティッカーのタップ数は取れない</h3>
+    <div class="wall-body">
+      Instagram公式アプリで見える「<span class="reason">リンクスティッカーのタップ数</span>」は、Graph APIでは完全に非公開です。Metaが一般提供していないため、どんなツールでも取得できません。
+      <span class="alt">「プロフィール遷移」または「反応合計」で代わりに測定します</span>
+    </div>
+  </div>
+
+  <div class="wall">
+    <span class="wall-num">壁 2</span>
+    <h3 class="wall-title">完視聴率（最後まで見た人）は取れない</h3>
+    <div class="wall-body">
+      以前のAPIでは取れていた「最後まで見た人の割合」は<span class="reason">廃止済</span>で、後継メトリクスがありません。公式UIで見える「閲覧維持」の数字は再現不能です。
+      <span class="alt">「リピート率」で方向性を把握（1人あたり何回見られたか）</span>
+    </div>
+  </div>
+
+  <div class="wall">
+    <span class="wall-num">壁 3</span>
+    <h3 class="wall-title">31日より前のフォロワー数は精緻には取れない</h3>
+    <div class="wall-body">
+      Graph APIには「過去のある日のフォロワー総数」を返すAPIが存在しません。<span class="reason">直近30日のみ</span>、日次の増減から逆算できます。
+      <span class="alt">30日以内は精緻、それ以前は"参考値"ラベル付きで表示</span>
+    </div>
+  </div>
+
+  <div class="wall">
+    <span class="wall-num">壁 4</span>
+    <h3 class="wall-title">運用開始より前のストーリーは取れない</h3>
+    <div class="wall-body">
+      ストーリーズは<span class="reason">24時間で消える</span>ため、ig-insightsを動かし始めた後から取得したものしかデータがありません。過去には遡れません。
+      <span class="alt">今日から貯め始めて、時間とともに資産化していきます</span>
+    </div>
+  </div>
+
+  <!-- 確認したいこと -->
+  <h2 class="section-title" id="confirm">着手前に確認したい3つのこと</h2>
+  <div class="confirm-box">
+    <div class="confirm-title">これだけ決めれば、すぐ動けます</div>
+
+    <div class="confirm-item">
+      <div class="confirm-q">「閲覧率」の定義はリーチ率でOKですか？</div>
+      <ul class="confirm-opts">
+        <li>リーチ ÷ フォロワー数（おすすめ・即実装可）</li>
+        <li>その他のご要望があれば教えてください</li>
+      </ul>
+    </div>
+
+    <div class="confirm-item">
+      <div class="confirm-q">「クリック数」は何を指していますか？</div>
+      <ul class="confirm-opts">
+        <li>プロフィールへ飛んだ数（取得可）</li>
+        <li>次のストーリーへ送った数（取得可・追加実装）</li>
+        <li>反応合計（返信＋シェア＋PV遷移）</li>
+        <li>リンクスティッカーのタップ数 → 代替指標のご相談が必要</li>
+      </ul>
+    </div>
+
+    <div class="confirm-item">
+      <div class="confirm-q">過去データは「直近30日は精緻、それ以前は参考値」で運用OKですか？</div>
+      <ul class="confirm-opts">
+        <li>OK：すぐ実装に入れます</li>
+        <li>NG：過去のフォロワー数を手動で教えていただければ精緻化できます</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="footer">
+    ig-insights feasibility report<br>
+    <a href="./index.html">▲ 活用メニューに戻る</a>
+  </p>
+</div>
+
+</body>
+</html>
