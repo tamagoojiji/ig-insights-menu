@@ -136,6 +136,35 @@
   .metric-name { font-weight: 700; color: var(--text-strong); font-size: 13px; }
   .metric-def { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
 
+  /* data sheets */
+  .sheet-card {
+    background: var(--white); border-radius: 16px; padding: 20px 22px;
+    box-shadow: var(--shadow); margin-bottom: 16px;
+    border: 2px solid var(--base-soft);
+  }
+  .sheet-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .sheet-card-emoji { font-size: 22px; }
+  .sheet-card-title { font-size: 15px; font-weight: 700; color: var(--text-strong); }
+  .sheet-card-desc { font-size: 12px; color: var(--text-soft); margin-bottom: 14px; line-height: 1.6; }
+  .col-table-wrap { overflow-x: auto; margin: 0 -4px; }
+  .col-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .col-table th, .col-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--base-soft); }
+  .col-table th { background: var(--base-soft); color: var(--text-strong); font-weight: 700; font-size: 11px; white-space: nowrap; }
+  .col-table td:first-child { font-weight: 700; color: var(--base); width: 36px; text-align: center; }
+  .col-table td:nth-child(2) { font-weight: 700; color: var(--text-strong); white-space: nowrap; }
+  .col-table tr:last-child td { border-bottom: none; }
+  .col-table .desc { color: var(--text); line-height: 1.55; }
+  .kind-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 100px;
+    font-size: 10px; font-weight: 700; white-space: nowrap;
+  }
+  .k-raw { background: #e3f2fd; color: #1976d2; }
+  .k-calc { background: #fce4ec; color: #c2185b; }
+  .k-id { background: #f5f5f5; color: #757575; }
+  .k-img { background: #fff3e0; color: #ef6c00; }
+  .k-meta { background: #e8f5e9; color: #388e3c; }
+  .legend { font-size: 11px; color: var(--text-soft); margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+
   /* wall */
   .wall {
     background: var(--white); border-radius: 16px; padding: 20px 22px;
@@ -223,6 +252,7 @@
     <a href="#maybe">条件付き</a>
     <a href="#cannot">できないこと</a>
     <a href="#matrix">一覧表</a>
+    <a href="#sheets">各シートの中身</a>
     <a href="#walls">なぜできないか</a>
     <a href="#confirm">確認したいこと</a>
   </div>
@@ -370,6 +400,147 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- 各シートの中身 -->
+  <h2 class="section-title" id="sheets">各シートの項目と性質</h2>
+  <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px;line-height:1.7;">
+    スプレッドシート1行目に書かれている項目名の「意味」と「性質」をまとめました。<br>
+    <span class="kind-badge k-raw">生データ</span> = Instagram APIから直接取得／
+    <span class="kind-badge k-calc">計算値</span> = 自動計算／
+    <span class="kind-badge k-img">画像</span> = サムネ／
+    <span class="kind-badge k-id">ID</span> = 識別子／
+    <span class="kind-badge k-meta">メタ</span> = 管理用情報
+  </p>
+
+  <!-- 📖 ストーリーズ -->
+  <div class="sheet-card">
+    <div class="sheet-card-head">
+      <span class="sheet-card-emoji">📖</span>
+      <span class="sheet-card-title">ストーリーズ</span>
+    </div>
+    <p class="sheet-card-desc">1行=1ストーリー。時系列で全ストーリーが蓄積されていくメインの一次データ。</p>
+    <div class="col-table-wrap">
+      <table class="col-table">
+        <thead><tr><th>列</th><th>項目名</th><th>性質</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>投稿日時</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">ストーリー公開時刻（JST）</td></tr>
+          <tr><td>B</td><td>サムネイル</td><td><span class="kind-badge k-img">画像</span></td><td class="desc">VPSに保存した静止画（期限切れしない独自ドメイン配信）</td></tr>
+          <tr><td>C</td><td>メディアタイプ</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">IMAGE（静止画）／VIDEO（動画）</td></tr>
+          <tr><td>D</td><td>リーチ</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">ユニークで届いた人数（1人=1カウント）</td></tr>
+          <tr><td>E</td><td>視聴数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">見られた延べ回数（同じ人が2回見れば+2）</td></tr>
+          <tr><td>F</td><td>返信数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">ストーリーへのDM返信数</td></tr>
+          <tr><td>G</td><td>シェア数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">シェアボタンで他人に送られた数</td></tr>
+          <tr><td>H</td><td>ナビゲーション</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">前後への送り・スワイプ・退出の総数（内訳は現状取得していない）</td></tr>
+          <tr><td>I</td><td>プロフィールアクセス</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">ストーリーからプロフィールに飛んだ数（フォロー動線の指標）</td></tr>
+          <tr><td>J</td><td>メディアID</td><td><span class="kind-badge k-id">ID</span></td><td class="desc">Instagramのユニーク識別子（行の重複防止用）</td></tr>
+          <tr><td>K</td><td>日付</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">投稿日時から日付だけを抽出（日次集計用）</td></tr>
+          <tr><td>L</td><td>閲覧率(%)</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">リーチ ÷ その日のフォロワー数 × 100（何%の人に届いたか）</td></tr>
+          <tr><td>M</td><td>リピート率</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">視聴数 ÷ リーチ（1人あたり平均何回見たか・1.5以上なら"刺さった"サイン）</td></tr>
+          <tr><td>N</td><td>PV遷移率(%)</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">プロフィールアクセス ÷ リーチ × 100（CTA・誘導の効き具合）</td></tr>
+          <tr><td>O</td><td>反応合計</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">返信 ＋ シェア ＋ プロフィールアクセス（反応の総量）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 📅 ストーリーズ日報 -->
+  <div class="sheet-card">
+    <div class="sheet-card-head">
+      <span class="sheet-card-emoji">📅</span>
+      <span class="sheet-card-title">ストーリーズ日報（新設）</span>
+    </div>
+    <p class="sheet-card-desc">1行=1日。その日の連投を"1セット"としてまとめ、サムネ横並びで流れを一望できる集計シート。</p>
+    <div class="col-table-wrap">
+      <table class="col-table">
+        <thead><tr><th>列</th><th>項目名</th><th>性質</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>日付</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">その日の年月日（yyyy/MM/dd）</td></tr>
+          <tr><td>B</td><td>枚数</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">その日投稿したストーリーズの本数</td></tr>
+          <tr><td>C</td><td>合計リーチ</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">全ストーリーのリーチ合計（延べ人数）</td></tr>
+          <tr><td>D</td><td>平均閲覧率</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">日内の閲覧率の平均（"その日全体の勢い"を表す）</td></tr>
+          <tr><td>E</td><td>最高閲覧率</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">日内で一番届いたストーリーの閲覧率（ピーク値）</td></tr>
+          <tr><td>F</td><td>合計反応</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">日内の"反応合計"の総和（その日のエンゲージの総量）</td></tr>
+          <tr><td>G</td><td>合計PV遷移</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">日内のプロフィール遷移の総和（フォロー流入の目安）</td></tr>
+          <tr><td>H〜N</td><td>サムネ1〜7</td><td><span class="kind-badge k-img">画像</span></td><td class="desc">その日のストーリーを時系列で横並び（フック→本編→CTAの流れを視覚化）</td></tr>
+          <tr><td>O</td><td>+N表記</td><td><span class="kind-badge k-meta">メタ</span></td><td class="desc">8枚以上投稿した日に残り枚数を表示（例: +3）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 📊 フォロワー推移 -->
+  <div class="sheet-card">
+    <div class="sheet-card-head">
+      <span class="sheet-card-emoji">📊</span>
+      <span class="sheet-card-title">フォロワー推移（閲覧率の分母）</span>
+    </div>
+    <p class="sheet-card-desc">1行=1日。閲覧率を「その日時点のフォロワー数」で正しく割るための土台データ。直近30日はAPIから逆算、以降は日次で自動追記。</p>
+    <div class="col-table-wrap">
+      <table class="col-table">
+        <thead><tr><th>列</th><th>項目名</th><th>性質</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>日付</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">その日の年月日</td></tr>
+          <tr><td>B</td><td>フォロワー数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">その日終了時点の総フォロワー数</td></tr>
+          <tr><td>C</td><td>増減</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">前日比（＋で増、−で減）</td></tr>
+          <tr><td>D</td><td>ソース</td><td><span class="kind-badge k-meta">メタ</span></td><td class="desc">「API逆算」or「現在値」（データの由来・信頼度の目印）</td></tr>
+          <tr><td>E</td><td>更新日時</td><td><span class="kind-badge k-meta">メタ</span></td><td class="desc">この行が書かれた実時刻（監査用）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 📸 フィード / 🎬 リール（参考） -->
+  <div class="sheet-card">
+    <div class="sheet-card-head">
+      <span class="sheet-card-emoji">📸</span>
+      <span class="sheet-card-title">フィード（参考）</span>
+    </div>
+    <p class="sheet-card-desc">通常投稿（画像・カルーセル）の履歴。1行=1投稿。</p>
+    <div class="col-table-wrap">
+      <table class="col-table">
+        <thead><tr><th>列</th><th>項目名</th><th>性質</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>投稿日時</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">投稿公開時刻（JST）</td></tr>
+          <tr><td>B</td><td>サムネイル</td><td><span class="kind-badge k-img">画像</span></td><td class="desc">1枚目の画像</td></tr>
+          <tr><td>C</td><td>タイプ</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">IMAGE / CAROUSEL_ALBUM</td></tr>
+          <tr><td>D</td><td>キャプション</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">本文（冒頭50文字で省略表示）</td></tr>
+          <tr><td>E</td><td>いいね数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">ハートが押された数</td></tr>
+          <tr><td>F</td><td>コメント数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">コメントされた数</td></tr>
+          <tr><td>G</td><td>保存数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">保存ボタンが押された数（"後で見返したい"のシグナル）</td></tr>
+          <tr><td>H</td><td>リーチ</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">ユニークで届いた人数</td></tr>
+          <tr><td>I</td><td>視聴数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">延べ閲覧回数</td></tr>
+          <tr><td>J</td><td>エンゲージメント率</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">反応総数 ÷ リーチ × 100</td></tr>
+          <tr><td>K</td><td>メディアID</td><td><span class="kind-badge k-id">ID</span></td><td class="desc">Instagramのユニーク識別子</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sheet-card">
+    <div class="sheet-card-head">
+      <span class="sheet-card-emoji">🎬</span>
+      <span class="sheet-card-title">リール（参考）</span>
+    </div>
+    <p class="sheet-card-desc">リール動画の履歴。1行=1リール。「シェア数」が独立しているのがフィードとの違い。</p>
+    <div class="col-table-wrap">
+      <table class="col-table">
+        <thead><tr><th>列</th><th>項目名</th><th>性質</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>投稿日時</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">投稿公開時刻（JST）</td></tr>
+          <tr><td>B</td><td>サムネイル</td><td><span class="kind-badge k-img">画像</span></td><td class="desc">動画のカバー画像</td></tr>
+          <tr><td>C</td><td>キャプション</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">本文（冒頭50文字で省略表示）</td></tr>
+          <tr><td>D</td><td>視聴数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">延べ再生回数</td></tr>
+          <tr><td>E</td><td>いいね数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">ハートが押された数</td></tr>
+          <tr><td>F</td><td>コメント数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">コメントされた数</td></tr>
+          <tr><td>G</td><td>保存数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">保存された数</td></tr>
+          <tr><td>H</td><td>リーチ</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">ユニークで届いた人数</td></tr>
+          <tr><td>I</td><td>シェア数</td><td><span class="kind-badge k-raw">生データ</span></td><td class="desc">シェアされた数（リールはバズの主要指標）</td></tr>
+          <tr><td>J</td><td>エンゲージメント率</td><td><span class="kind-badge k-calc">計算値</span></td><td class="desc">(いいね+コメント+保存+シェア) ÷ リーチ × 100</td></tr>
+          <tr><td>K</td><td>メディアID</td><td><span class="kind-badge k-id">ID</span></td><td class="desc">Instagramのユニーク識別子</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- 壁 -->
