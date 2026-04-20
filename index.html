@@ -92,6 +92,25 @@
     margin-bottom: 4px; line-height: 1.4;
   }
   .card-desc { font-size: 13px; color: var(--text-soft); line-height: 1.55; }
+  .free-box {
+    background: var(--white); border-radius: 20px; padding: 24px 24px 26px;
+    box-shadow: var(--shadow); margin-bottom: 24px; border: 2px solid var(--base-soft);
+  }
+  .free-label {
+    font-size: 15px; font-weight: 700; color: #2d3748;
+    margin-bottom: 6px; display: flex; align-items: center; gap: 8px;
+  }
+  .free-label::before { content: "💭"; font-size: 18px; }
+  .free-hint { font-size: 12px; color: var(--text-soft); margin-bottom: 14px; }
+  .free-input {
+    width: 100%; min-height: 100px; padding: 14px 16px;
+    border: 2px solid var(--base-soft); border-radius: 14px;
+    font-family: inherit; font-size: 14px; color: var(--text);
+    line-height: 1.6; resize: vertical; background: #fafcff;
+    transition: all 0.2s ease; outline: none;
+  }
+  .free-input:focus { border-color: var(--base); background: white; }
+  .free-input::placeholder { color: #b8c3d1; }
   .cta-box {
     background: linear-gradient(135deg, var(--base) 0%, #a8c2e8 100%);
     border-radius: 24px; padding: 32px 24px; color: white;
@@ -155,6 +174,13 @@
     <!-- cards injected by JS -->
   </div>
 
+  <div class="free-box">
+    <div class="free-label">その他にどんなことをしたいですか？</div>
+    <div class="free-hint">上の10個にないアイデア・こんな数字が見たい・ぼんやりした希望でもOKです🌸</div>
+    <textarea class="free-input" id="freeInput"
+      placeholder="例）&#10;・フォロワーの属性別に反応を見たい&#10;・コラボ投稿の効果を比較したい&#10;・ハッシュタグ別のリーチを測りたい…など"></textarea>
+  </div>
+
   <div class="cta-box">
     <div class="count-badge" id="countBadge">0 件選択中</div>
     <div class="cta-title">これを一緒にやりたい！</div>
@@ -214,15 +240,24 @@
   const badge = document.getElementById("countBadge");
   const btn = document.getElementById("copyBtn");
   const toast = document.getElementById("toast");
+  const freeInput = document.getElementById("freeInput");
 
   function updateCount() {
-    badge.textContent = `${selected.size} 件選択中`;
-    btn.disabled = selected.size === 0;
+    const freeFilled = freeInput.value.trim().length > 0;
+    const total = selected.size + (freeFilled ? 1 : 0);
+    badge.textContent = `${total} 件選択中`;
+    btn.disabled = total === 0;
   }
+
+  freeInput.addEventListener("input", updateCount);
 
   btn.addEventListener("click", async () => {
     const picks = [...selected].sort((a, b) => a - b).map(i => `・${items[i].title}：${items[i].desc}`).join("\n");
-    const text = `【ig-insightsでやりたいこと】\n${picks}\n\nこれを一緒に進めたいです🌸`;
+    const free = freeInput.value.trim();
+    let text = `【ig-insightsでやりたいこと】\n`;
+    if (picks) text += `${picks}\n`;
+    if (free) text += `\n【その他やりたいこと】\n${free}\n`;
+    text += `\nこれを一緒に進めたいです🌸`;
     try {
       await navigator.clipboard.writeText(text);
       toast.classList.add("show");
