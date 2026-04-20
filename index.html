@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ig-insights｜集めた数字で、何がしたい？</title>
+<meta name="description" content="Instagramインサイトを自動で貯めたあと、どう活用する？10個の選択肢から気になるものを選んでください。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --base: #91aedf;
+    --base-light: #d5e3f5;
+    --base-soft: #eef3fb;
+    --accent: #f8c8dc;
+    --white: #ffffff;
+    --text: #4a5568;
+    --text-soft: #7b8593;
+    --shadow: 0 4px 20px rgba(145, 174, 223, 0.15);
+    --shadow-hover: 0 8px 28px rgba(145, 174, 223, 0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
+    color: var(--text);
+    background: linear-gradient(180deg, #f5f9ff 0%, #eef3fb 100%);
+    min-height: 100vh;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 48px 20px 120px; }
+  header { text-align: center; margin-bottom: 48px; position: relative; }
+  header::before {
+    content: "☁️"; position: absolute; top: -20px; left: 10%;
+    font-size: 32px; opacity: 0.6;
+  }
+  header::after {
+    content: "🌸"; position: absolute; top: -10px; right: 15%;
+    font-size: 28px; opacity: 0.7;
+  }
+  .badge {
+    display: inline-block; background: var(--base-light); color: var(--base);
+    padding: 6px 18px; border-radius: 100px; font-size: 13px; font-weight: 700;
+    margin-bottom: 16px; letter-spacing: 0.05em;
+  }
+  h1 {
+    font-size: clamp(24px, 5vw, 32px); font-weight: 700; color: #2d3748;
+    margin-bottom: 12px; letter-spacing: 0.02em;
+  }
+  .subtitle { color: var(--text-soft); font-size: 15px; }
+  .intro {
+    background: var(--white); border-radius: 20px; padding: 24px 28px;
+    box-shadow: var(--shadow); margin-bottom: 40px;
+    border: 2px solid var(--base-soft);
+  }
+  .intro p { font-size: 15px; color: var(--text); }
+  .intro strong { color: var(--base); font-weight: 700; }
+  .section-title {
+    font-size: 18px; font-weight: 700; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px; color: #2d3748;
+  }
+  .section-title::before {
+    content: ""; width: 4px; height: 20px; background: var(--base);
+    border-radius: 4px;
+  }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 40px; }
+  @media (min-width: 680px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .card {
+    background: var(--white); border-radius: 18px; padding: 20px 22px;
+    box-shadow: var(--shadow); cursor: pointer;
+    transition: all 0.2s ease; border: 2px solid transparent;
+    position: relative; display: flex; gap: 14px; align-items: flex-start;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .card.selected { border-color: var(--base); background: var(--base-soft); }
+  .card.selected::after {
+    content: "✓"; position: absolute; top: 12px; right: 14px;
+    width: 26px; height: 26px; background: var(--base); color: white;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+  .icon {
+    flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px;
+    background: var(--base-light); display: flex; align-items: center;
+    justify-content: center; font-size: 22px;
+  }
+  .card-body { flex: 1; min-width: 0; }
+  .card-title {
+    font-size: 15px; font-weight: 700; color: #2d3748;
+    margin-bottom: 4px; line-height: 1.4;
+  }
+  .card-desc { font-size: 13px; color: var(--text-soft); line-height: 1.55; }
+  .cta-box {
+    background: linear-gradient(135deg, var(--base) 0%, #a8c2e8 100%);
+    border-radius: 24px; padding: 32px 24px; color: white;
+    text-align: center; box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+  .cta-box::before {
+    content: "✨"; position: absolute; top: 14px; left: 20px;
+    font-size: 22px; opacity: 0.8;
+  }
+  .cta-box::after {
+    content: "💭"; position: absolute; bottom: 14px; right: 20px;
+    font-size: 22px; opacity: 0.8;
+  }
+  .cta-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .cta-sub { font-size: 14px; opacity: 0.95; margin-bottom: 20px; }
+  .count-badge {
+    display: inline-block; background: white; color: var(--base);
+    padding: 6px 16px; border-radius: 100px; font-weight: 700;
+    font-size: 14px; margin-bottom: 16px;
+  }
+  .btn {
+    display: inline-block; background: white; color: var(--base);
+    padding: 14px 32px; border: none; border-radius: 100px;
+    font-family: inherit; font-weight: 700; font-size: 15px;
+    cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: #2d3748; color: white; padding: 14px 24px; border-radius: 100px;
+    font-size: 14px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    opacity: 0; transition: all 0.3s ease; z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .footer { text-align: center; margin-top: 48px; font-size: 12px; color: var(--text-soft); }
+  .footer a { color: var(--base); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <span class="badge">for Instagram creators</span>
+    <h1>集めた数字で、<br>あなたは何がしたい？</h1>
+    <p class="subtitle">ig-insights で貯まったデータの、活用メニュー10選</p>
+  </header>
+
+  <div class="intro">
+    <p>
+      インスタのインサイトを毎日自動で集める仕組みは、<strong>あくまでスタート地点</strong>。<br>
+      大切なのは「集めたデータで <strong>何をしたいか</strong>」です。<br>
+      10個の活用メニューから、<strong>気になるものをタップ</strong>して教えてください🌸
+    </p>
+  </div>
+
+  <h2 class="section-title">活用メニュー</h2>
+
+  <div class="grid" id="grid">
+    <!-- cards injected by JS -->
+  </div>
+
+  <div class="cta-box">
+    <div class="count-badge" id="countBadge">0 件選択中</div>
+    <div class="cta-title">これを一緒にやりたい！</div>
+    <p class="cta-sub">選んだ項目をコピーして、LINE・DMで送ってください</p>
+    <button class="btn" id="copyBtn" disabled>選んだ内容をコピー</button>
+  </div>
+
+  <p class="footer">
+    ig-insights ― Instagramインサイト自動収集ツール<br>
+    <a href="#top">▲ 上にもどる</a>
+  </p>
+</div>
+
+<div class="toast" id="toast">コピーしました ✨</div>
+
+<script>
+  const items = [
+    { icon: "🏆", title: "勝ちパターン抽出", desc: "エンゲージメント率TOP投稿の共通点をAIで言語化。次の企画テンプレにする。" },
+    { icon: "📌", title: "保存される投稿ランキング", desc: "「後で見返したい」と思われた投稿を特定。保存率で路線を決める。" },
+    { icon: "⏰", title: "黄金の投稿時間帯", desc: "曜日×時間帯でリーチが伸びる黄金枠を可視化。感覚ではなく根拠で選ぶ。" },
+    { icon: "🎬", title: "リール冒頭3秒診断", desc: "視聴維持率から離脱ポイントを特定。伸びた動画と見比べて改善。" },
+    { icon: "💌", title: "ストーリーズのフォロー転換率", desc: "プロフィール誘導の効き具合を週次モニター。CTA配置を数字で改善。" },
+    { icon: "📈", title: "月次KPIレポート", desc: "毎月の振り返りノートを自動生成。モチベ維持と来月の企画案もセット。" },
+    { icon: "🤖", title: "過去データから台本生成", desc: "勝ちパターンを学習したAIに新企画を作らせる。ゼロから悩まない。" },
+    { icon: "🎯", title: "ジャンル別ROI比較", desc: "自分の得意・不得意テーマを数字で把握。惰性の投稿を卒業する。" },
+    { icon: "🎙️", title: "他媒体へのネタ二次利用", desc: "伸びた投稿を Threads・X・ブログ・ボイシー台本 に展開。ネタ銀行化。" },
+    { icon: "💰", title: "売上連動分析", desc: "LP・決済データと紐付け、売れる投稿を特定。導線を再現可能にする。" },
+  ];
+
+  const grid = document.getElementById("grid");
+  const selected = new Set();
+
+  items.forEach((item, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.index = i;
+    card.innerHTML = `
+      <div class="icon">${item.icon}</div>
+      <div class="card-body">
+        <div class="card-title">${item.title}</div>
+        <div class="card-desc">${item.desc}</div>
+      </div>
+    `;
+    card.addEventListener("click", () => {
+      if (selected.has(i)) {
+        selected.delete(i);
+        card.classList.remove("selected");
+      } else {
+        selected.add(i);
+        card.classList.add("selected");
+      }
+      updateCount();
+    });
+    grid.appendChild(card);
+  });
+
+  const badge = document.getElementById("countBadge");
+  const btn = document.getElementById("copyBtn");
+  const toast = document.getElementById("toast");
+
+  function updateCount() {
+    badge.textContent = `${selected.size} 件選択中`;
+    btn.disabled = selected.size === 0;
+  }
+
+  btn.addEventListener("click", async () => {
+    const picks = [...selected].sort((a, b) => a - b).map(i => `・${items[i].title}：${items[i].desc}`).join("\n");
+    const text = `【ig-insightsでやりたいこと】\n${picks}\n\nこれを一緒に進めたいです🌸`;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2000);
+    } catch (e) {
+      alert(text);
+    }
+  });
+</script>
+
+</body>
+</html>
